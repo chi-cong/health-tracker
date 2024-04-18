@@ -39,7 +39,6 @@ class LoginPage extends StatefulWidget {
 
 class _MyHomePageState extends State<LoginPage> {
   final _loginKey = GlobalKey<FormState>();
-  VoidCallback submitForm = () {};
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +60,10 @@ class _MyHomePageState extends State<LoginPage> {
                         prefixIcon: Icon(Icons.mail),
                         border: UnderlineInputBorder(),
                         labelText: 'Email'),
+                    validator: (value) =>
+                        value == null || value.trim().contains('@')
+                            ? null
+                            : 'Invalid Email',
                   ),
                 ),
                 const SizedBox(
@@ -69,11 +72,23 @@ class _MyHomePageState extends State<LoginPage> {
                 SizedBox(
                   width: 250,
                   child: TextFormField(
-                    decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.lock),
-                        border: UnderlineInputBorder(),
-                        labelText: 'Password'),
-                  ),
+                      decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.lock),
+                          border: UnderlineInputBorder(),
+                          labelText: 'Password'),
+                      obscureText: true,
+                      validator: (value) {
+                        RegExp regExp = RegExp(r'^(?=.*[a-zA-Z])(?=.*\d).+$');
+                        if (value == null ||
+                            value.length < 8 ||
+                            value.length >= 30) {
+                          return 'Password length should be 8 to 30';
+                        }
+                        if (!regExp.hasMatch(value)) {
+                          return 'Must contains characters and digits';
+                        }
+                        return null;
+                      }),
                 ),
                 const SizedBox(
                   height: 40,
@@ -81,7 +96,10 @@ class _MyHomePageState extends State<LoginPage> {
                 SizedBox(
                   width: 150,
                   child: FilledButton(
-                      onPressed: submitForm, child: const Text('Login')),
+                      onPressed: () {
+                        if (_loginKey.currentState!.validate()) {}
+                      },
+                      child: const Text('Login')),
                 )
               ],
             ),
