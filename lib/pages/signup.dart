@@ -9,6 +9,8 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
+  final _signupKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return (Stack(children: [
@@ -18,28 +20,109 @@ class _SignupPageState extends State<SignupPage> {
         fit: BoxFit.cover,
       )),
       Scaffold(
-          body: Container(
-        decoration: const BoxDecoration(
-            image: DecorationImage(
-                image: ExactAssetImage('assets/bg_img/bg1.jpg'),
-                fit: BoxFit.fill)),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text('Signup Page'),
-              FilledButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginPage()));
-                  },
-                  child: const Text('Back to login page'))
-            ],
-          ),
-        ),
-      ))
+          backgroundColor: Colors.transparent,
+          body: SingleChildScrollView(
+            child: Form(
+                key: _signupKey,
+                child: Center(
+                  child: Column(
+                    children: <Widget>[
+                      const SizedBox(
+                        height: 200,
+                      ),
+                      SizedBox(
+                          width: 250,
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                decoration: const InputDecoration(
+                                    prefixIcon: Icon(Icons.mail),
+                                    border: UnderlineInputBorder(),
+                                    labelText: 'Email'),
+                                validator: (value) =>
+                                    value == null || value.trim().contains('@')
+                                        ? null
+                                        : 'Invalid Email',
+                              ),
+                              const SizedBox(
+                                height: 40,
+                              ),
+                              TextFormField(
+                                  decoration: const InputDecoration(
+                                      prefixIcon: Icon(Icons.lock),
+                                      border: UnderlineInputBorder(),
+                                      labelText: 'Password'),
+                                  obscureText: true,
+                                  validator: (value) {
+                                    RegExp regExp =
+                                        RegExp(r'^(?=.*[a-zA-Z])(?=.*\d).+$');
+                                    if (value == null ||
+                                        value.length < 8 ||
+                                        value.length >= 30) {
+                                      return 'Password length should be 8 to 30';
+                                    }
+                                    if (!regExp.hasMatch(value)) {
+                                      return 'Must contains characters and digits';
+                                    }
+                                    return null;
+                                  }),
+                              const SizedBox(
+                                height: 40,
+                              ),
+                              TextFormField(
+                                  decoration: const InputDecoration(
+                                      prefixIcon: Icon(Icons.lock),
+                                      border: UnderlineInputBorder(),
+                                      labelText: 'Password Again'),
+                                  obscureText: true,
+                                  validator: (value) {
+                                    RegExp regExp =
+                                        RegExp(r'^(?=.*[a-zA-Z])(?=.*\d).+$');
+                                    if (value == null ||
+                                        value.length < 8 ||
+                                        value.length >= 30) {
+                                      return 'Password length should be 8 to 30';
+                                    }
+                                    if (!regExp.hasMatch(value)) {
+                                      return 'Must contains characters and digits';
+                                    }
+                                    return null;
+                                  }),
+                            ],
+                          )),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      SizedBox(
+                        width: 250,
+                        child: FilledButton(
+                            onPressed: () {
+                              if (_signupKey.currentState!.validate()) {}
+                            },
+                            child: const Text('Signup')),
+                      ),
+                      SizedBox(
+                        height: 40,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text("Already have an account ?"),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LoginPage()));
+                                },
+                                child: const Text('Login'))
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                )),
+          ))
     ]));
   }
 }
