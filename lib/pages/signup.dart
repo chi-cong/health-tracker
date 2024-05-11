@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../auth/authentication.dart';
 import './login.dart';
 
 class SignupPage extends StatefulWidget {
@@ -9,7 +10,11 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
+  final Authentication authentication = Authentication();
   final _signupKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +40,7 @@ class _SignupPageState extends State<SignupPage> {
                           child: Column(
                             children: [
                               TextFormField(
+                                controller: emailController,
                                 decoration: const InputDecoration(
                                     prefixIcon: Icon(Icons.mail),
                                     border: UnderlineInputBorder(),
@@ -48,6 +54,7 @@ class _SignupPageState extends State<SignupPage> {
                                 height: 40,
                               ),
                               TextFormField(
+                                  controller: passwordController,
                                   decoration: const InputDecoration(
                                       prefixIcon: Icon(Icons.lock),
                                       border: UnderlineInputBorder(),
@@ -70,10 +77,11 @@ class _SignupPageState extends State<SignupPage> {
                                 height: 40,
                               ),
                               TextFormField(
+                                  controller: confirmPasswordController,
                                   decoration: const InputDecoration(
                                       prefixIcon: Icon(Icons.lock),
                                       border: UnderlineInputBorder(),
-                                      labelText: 'Password Again'),
+                                      labelText: 'Confirm Password'),
                                   obscureText: true,
                                   validator: (value) {
                                     RegExp regExp =
@@ -86,6 +94,10 @@ class _SignupPageState extends State<SignupPage> {
                                     if (!regExp.hasMatch(value)) {
                                       return 'Must contains characters and digits';
                                     }
+                                    if (passwordController.text !=
+                                        confirmPasswordController.text) {
+                                      return ('Must be the same with password');
+                                    }
                                     return null;
                                   }),
                             ],
@@ -97,7 +109,26 @@ class _SignupPageState extends State<SignupPage> {
                         width: 250,
                         child: FilledButton(
                             onPressed: () {
-                              if (_signupKey.currentState!.validate()) {}
+                              if (_signupKey.currentState!.validate()) {
+                                try {
+                                  authentication.createUser(
+                                      emailController.text,
+                                      passwordController.text);
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(const SnackBar(
+                                    content: Text('Signup Success ˶ᵔ ᵕ ᵔ˶'),
+                                    duration: Durations.medium2,
+                                  ));
+                                  Navigator.pop(context);
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(const SnackBar(
+                                    content: Text(
+                                        "Something gone wrong. Please try again (っ◞‸◟ c)"),
+                                    duration: Durations.medium2,
+                                  ));
+                                }
+                              }
                             },
                             child: const Text('Signup')),
                       ),
