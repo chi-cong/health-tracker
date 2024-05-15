@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../auth/authentication.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import './login.dart';
 
 class SignupPage extends StatefulWidget {
@@ -10,7 +11,7 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-  final Authentication authentication = Authentication();
+  final Authentication _authentication = Authentication();
   final _signupKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -108,25 +109,33 @@ class _SignupPageState extends State<SignupPage> {
                       SizedBox(
                         width: 250,
                         child: FilledButton(
-                            onPressed: () {
+                            onPressed: () async {
                               if (_signupKey.currentState!.validate()) {
+                                context.loaderOverlay.show();
                                 try {
-                                  authentication.createUser(
+                                  await _authentication.createUser(
                                       emailController.text,
                                       passwordController.text);
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(const SnackBar(
-                                    content: Text('Signup Success ˶ᵔ ᵕ ᵔ˶'),
-                                    duration: Durations.medium2,
-                                  ));
-                                  Navigator.pop(context);
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(const SnackBar(
+                                      content: Text('Signup Success ˶ᵔ ᵕ ᵔ˶'),
+                                      duration: Duration(milliseconds: 1500),
+                                    ));
+                                    Navigator.pop(context);
+                                  }
                                 } catch (e) {
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(const SnackBar(
-                                    content: Text(
-                                        "Something gone wrong. Please try again (っ◞‸◟ c)"),
-                                    duration: Durations.medium2,
-                                  ));
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                      content: Text(e.toString()),
+                                      duration: Durations.long1,
+                                      backgroundColor: Colors.red,
+                                    ));
+                                  }
+                                }
+                                if (context.mounted) {
+                                  context.loaderOverlay.hide();
                                 }
                               }
                             },

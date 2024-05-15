@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:loader_overlay/loader_overlay.dart';
+import '../auth/authentication.dart';
 import 'signup.dart';
 import './forgot_pass_page.dart';
+import './home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({
@@ -12,7 +15,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final Authentication _authentication = Authentication();
   final _loginKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +44,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: Column(
                           children: [
                             TextFormField(
+                              controller: emailController,
                               decoration: const InputDecoration(
                                   prefixIcon: Icon(Icons.mail),
                                   border: UnderlineInputBorder(),
@@ -51,6 +58,7 @@ class _LoginPageState extends State<LoginPage> {
                               height: 40,
                             ),
                             TextFormField(
+                                controller: passwordController,
                                 decoration: const InputDecoration(
                                     prefixIcon: Icon(Icons.lock),
                                     border: UnderlineInputBorder(),
@@ -93,8 +101,34 @@ class _LoginPageState extends State<LoginPage> {
                     SizedBox(
                       width: 250,
                       child: FilledButton(
-                          onPressed: () {
-                            if (_loginKey.currentState!.validate()) {}
+                          onPressed: () async {
+                            if (_loginKey.currentState!.validate()) {
+                              context.loaderOverlay.show();
+                              try {
+                                var credential = await _authentication.loggin(
+                                    emailController.text,
+                                    passwordController.text);
+                                if (credential != null && context.mounted) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const HomePage(),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    content: Text(e.toString()),
+                                    duration:
+                                        const Duration(milliseconds: 1500),
+                                    backgroundColor: Colors.red,
+                                  ));
+                                }
+                              }
+                              if (context.mounted) context.loaderOverlay.hide();
+                            }
                           },
                           child: const Text('Login')),
                     ),
