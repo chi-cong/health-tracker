@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
-import '../auth/authentication.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import './login.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../auth/authentication.dart';
+import '../components/custom_snackbar.dart';
+import 'login_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final String accMail;
+
+  const HomePage({super.key, required this.accMail});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -12,6 +16,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final Authentication _authentication = Authentication();
+  final db = FirebaseFirestore.instance;
+  final message = CustomSnackbar();
+  var accRef;
+  var accDoc;
+
+  @override
+  void initState() {
+    accRef = db.doc('user/${widget.accMail}');
+    accRef.get().then((DocumentSnapshot doc) => setState(() {
+          accDoc = doc.data();
+        }));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,33 +41,54 @@ class _HomePageState extends State<HomePage> {
       Scaffold(
           backgroundColor: Colors.transparent,
           body: SingleChildScrollView(
-            child: Center(
-              child: Column(
-                children: [
-                  const Text('Main Page'),
-                  TextButton(
-                      onPressed: () {
-                        context.loaderOverlay.show();
-                        try {
-                          _authentication.logout();
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const LoginPage(),
-                            ),
-                          );
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text(e.toString()),
-                            duration: Durations.long1,
-                            backgroundColor: Colors.red,
-                          ));
-                        }
-                        context.loaderOverlay.hide();
-                      },
-                      child: const Text('Logout'))
-                ],
-              ),
+            padding: const EdgeInsets.fromLTRB(40, 90, 40, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Welcome Back ',
+                  style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  child: Text(
+                    '${accDoc != null && accDoc!.containsKey('username') ? accDoc!['username'] : widget.accMail}',
+                    style: const TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
+                ),
+                Container(
+                  height: 50,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white70),
+                      color: Colors.white70,
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(20))),
+                ),
+                TextButton(
+                    onPressed: () {
+                      context.loaderOverlay.show();
+                      try {
+                        _authentication.logout();
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPage(),
+                          ),
+                        );
+                      } catch (e) {
+                        message.error(e.toString(), context);
+                      }
+                      context.loaderOverlay.hide();
+                    },
+                    child: const Text('Logout'))
+              ],
             ),
           ))
     ]);

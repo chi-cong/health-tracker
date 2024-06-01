@@ -76,7 +76,7 @@ class _ForgotPassPageState extends State<ForgotPassPage> {
                                 decoration: const InputDecoration(
                                     prefixIcon: Icon(Icons.lock),
                                     border: UnderlineInputBorder(),
-                                    labelText: 'New Password Again'),
+                                    labelText: 'Confirm Password '),
                                 obscureText: true,
                                 validator: (value) {
                                   RegExp regExp =
