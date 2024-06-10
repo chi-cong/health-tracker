@@ -171,8 +171,9 @@ class _LoginPageState extends State<LoginPage> {
                                     ));
                                   }
                                 }
-                                if (context.mounted)
+                                if (context.mounted) {
                                   context.loaderOverlay.hide();
+                                }
                               }
                             },
                             child: const Text('Login')),

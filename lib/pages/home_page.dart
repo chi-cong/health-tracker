@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../auth/authentication.dart';
@@ -20,6 +18,7 @@ class _HomePageState extends State<HomePage> {
   final Authentication _authentication = Authentication();
   final db = FirebaseFirestore.instance;
   final message = CustomSnackbar();
+
   var accRef;
   var accDoc;
 
@@ -41,6 +40,66 @@ class _HomePageState extends State<HomePage> {
         fit: BoxFit.cover,
       )),
       Scaffold(
+          drawer: Drawer(
+              child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.indigo,
+                ),
+                child: Text(
+                  'Have A Good Day !',
+                  style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white70),
+                ),
+              ),
+              ListTile(
+                leading: const Icon(
+                  Icons.person_outline,
+                  color: Colors.indigo,
+                ),
+                title: const Text('My Account'),
+                onTap: () {},
+              ),
+              ListTile(
+                leading: const Icon(
+                  Icons.logout_outlined,
+                  color: Colors.indigo,
+                ),
+                title: const Text('Logout'),
+                onTap: () {
+                  context.loaderOverlay.show();
+                  try {
+                    _authentication.logout();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LoginPage(),
+                      ),
+                    );
+                  } catch (e) {
+                    message.error(e.toString(), context);
+                  }
+                  context.loaderOverlay.hide();
+                },
+              )
+            ],
+          )),
+          floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
+          floatingActionButton: Builder(
+              builder: (context) => FloatingActionButton(
+                    onPressed: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                    backgroundColor: Colors.grey.shade300,
+                    child: const Icon(
+                      Icons.menu,
+                      color: Colors.indigo,
+                    ),
+                  )),
           backgroundColor: Colors.transparent,
           body: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(40, 90, 40, 0),
@@ -107,36 +166,6 @@ class _HomePageState extends State<HomePage> {
                           padding: EdgeInsets.fromLTRB(35, 0, 0, 0),
                           child: Text(
                             'Update Daily Stats',
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  child: Container(
-                    margin: const EdgeInsets.fromLTRB(0, 30, 0, 0),
-                    height: 65,
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                        color: Colors.white70,
-                        borderRadius: BorderRadius.all(Radius.circular(20))),
-                    child: const Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                          child: Icon(
-                            Icons.person_outlined,
-                            size: 40,
-                            color: Colors.indigo,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(35, 0, 0, 0),
-                          child: Text(
-                            'My Information',
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.w500),
                           ),
@@ -238,26 +267,9 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-                TextButton(
-                    onPressed: () {
-                      context.loaderOverlay.show();
-                      try {
-                        _authentication.logout();
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LoginPage(),
-                          ),
-                        );
-                      } catch (e) {
-                        message.error(e.toString(), context);
-                      }
-                      context.loaderOverlay.hide();
-                    },
-                    child: const Text('Logout'))
               ],
             ),
-          ))
+          )),
     ]);
   }
 }
