@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../auth/authentication.dart';
@@ -46,7 +48,7 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Welcome Back ',
+                  'Hello',
                   style: TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
@@ -63,13 +65,178 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 Container(
+                  margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                   height: 50,
                   width: double.infinity,
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white70),
+                  decoration: const BoxDecoration(
                       color: Colors.white70,
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(20))),
+                      borderRadius: BorderRadius.all(Radius.circular(20))),
+                  child: const Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                        child: Text('BMI: 27'),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(35, 0, 0, 0),
+                        child: Text('Classification: Overweight'),
+                      ),
+                    ],
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => {},
+                  child: Container(
+                    margin: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+                    height: 65,
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                        color: Colors.white70,
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                    child: const Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                          child: Icon(
+                            Icons.task_outlined,
+                            size: 40,
+                            color: Colors.indigo,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(35, 0, 0, 0),
+                          child: Text(
+                            'Update Daily Stats',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  child: Container(
+                    margin: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+                    height: 65,
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                        color: Colors.white70,
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                    child: const Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                          child: Icon(
+                            Icons.person_outlined,
+                            size: 40,
+                            color: Colors.indigo,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(35, 0, 0, 0),
+                          child: Text(
+                            'My Information',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => {},
+                  child: Container(
+                    margin: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+                    height: 65,
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                        color: Colors.white70,
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                    child: const Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                          child: Icon(
+                            Icons.bar_chart_outlined,
+                            size: 40,
+                            color: Colors.indigo,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(35, 0, 0, 0),
+                          child: Text(
+                            'Stats History',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => {},
+                  child: Container(
+                    margin: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+                    height: 65,
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                        color: Colors.white70,
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                    child: const Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                          child: Icon(
+                            Icons.schedule_outlined,
+                            size: 40,
+                            color: Colors.indigo,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(35, 0, 0, 0),
+                          child: Text(
+                            'Schedulte & Diet',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => {},
+                  child: Container(
+                    margin: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+                    height: 65,
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                        color: Colors.white70,
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                    child: const Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                          child: Icon(
+                            Icons.question_answer_outlined,
+                            size: 40,
+                            color: Colors.indigo,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(35, 0, 0, 0),
+                          child: Text(
+                            'Ask AI Chatbot',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
                 TextButton(
                     onPressed: () {
