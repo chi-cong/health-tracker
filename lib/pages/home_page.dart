@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../auth/authentication.dart';
 import '../components/custom_snackbar.dart';
 import 'login_page.dart';
+import './sub_pages/daily_stats_page.dart';
 
 class HomePage extends StatefulWidget {
   final String accMail;
@@ -144,7 +145,14 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () => {},
+                  onTap: () => {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const DailyStatsPage(),
+                      ),
+                    )
+                  },
                   child: Container(
                     margin: const EdgeInsets.fromLTRB(0, 30, 0, 0),
                     height: 65,
