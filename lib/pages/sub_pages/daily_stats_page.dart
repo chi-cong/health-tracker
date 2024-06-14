@@ -1,10 +1,14 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import '../../utils/bmi_calculator.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DailyStatsPage extends StatefulWidget {
-  const DailyStatsPage({super.key});
+  final String accMail;
+  const DailyStatsPage({super.key, required this.accMail});
 
   @override
   State<DailyStatsPage> createState() => _DailyStatsPageState();
@@ -14,8 +18,34 @@ class _DailyStatsPageState extends State<DailyStatsPage> {
   final today = DateFormat('yMd').format(DateTime.now());
   final _dailyKey = GlobalKey<FormState>();
   final bmiCal = BmiCalculator();
+  final db = FirebaseFirestore.instance;
   final weightController = TextEditingController();
   final heightController = TextEditingController();
+
+  void _showBmiDialog(double bmi) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => Dialog(
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                        'Your bmi is $bmi, You are classifed as ${bmiCal.getClassification(bmi)}. For more detail, head to "Schedule & diet" '),
+                    const SizedBox(height: 15),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+              ),
+            ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,40 +136,20 @@ class _DailyStatsPageState extends State<DailyStatsPage> {
                                                   heightController.text),
                                               double.parse(
                                                   weightController.text));
+
+                                          db
+                                              .doc('users/${widget.accMail}')
+                                              .set({
+                                            'dailyStats': {
+                                              'date': today,
+                                              'bmi': bmi,
+                                              'weight': weightController.text,
+                                              'height': heightController.text
+                                            }
+                                          }, SetOptions(merge: true));
                                           if (_dailyKey.currentState!
                                               .validate()) {
-                                            showDialog(
-                                                context: context,
-                                                builder: (BuildContext
-                                                        context) =>
-                                                    Dialog(
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(15.0),
-                                                        child: Column(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: <Widget>[
-                                                            Text(
-                                                                'Your bmi is $bmi, You are classifed as ${bmiCal.getClassification(bmi)}. For more detail, head to "Schedule & diet" '),
-                                                            const SizedBox(
-                                                                height: 15),
-                                                            TextButton(
-                                                              onPressed: () {
-                                                                Navigator.pop(
-                                                                    context);
-                                                              },
-                                                              child: const Text(
-                                                                  'OK'),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ));
+                                            _showBmiDialog(bmi);
                                           }
                                         },
                                         child: const Text('Get today results'))

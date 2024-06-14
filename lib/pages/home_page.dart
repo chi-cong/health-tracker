@@ -5,6 +5,7 @@ import '../auth/authentication.dart';
 import '../components/custom_snackbar.dart';
 import 'login_page.dart';
 import './sub_pages/daily_stats_page.dart';
+import './sub_pages/my_info_page.dart';
 
 class HomePage extends StatefulWidget {
   final String accMail;
@@ -25,7 +26,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    accRef = db.doc('user/${widget.accMail}');
+    accRef = db.doc('users/${widget.accMail}');
     accRef.get().then((DocumentSnapshot doc) => setState(() {
           accDoc = doc.data();
         }));
@@ -63,7 +64,14 @@ class _HomePageState extends State<HomePage> {
                   color: Colors.indigo,
                 ),
                 title: const Text('My Account'),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MyInfoPage(
+                                accMail: widget.accMail,
+                              )));
+                },
               ),
               ListTile(
                 leading: const Icon(
@@ -149,7 +157,9 @@ class _HomePageState extends State<HomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const DailyStatsPage(),
+                        builder: (context) => DailyStatsPage(
+                          accMail: widget.accMail,
+                        ),
                       ),
                     )
                   },

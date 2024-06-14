@@ -4,8 +4,16 @@ class CustomSnackbar {
   void error(String message, BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(message),
-      duration: Durations.long1,
+      duration: Durations.extralong4,
       backgroundColor: Colors.red,
+    ));
+  }
+
+  void success(String message, BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      duration: Durations.extralong4,
+      backgroundColor: Colors.green,
     ));
   }
 }
