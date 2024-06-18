@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -15,7 +13,7 @@ class DailyStatsPage extends StatefulWidget {
 }
 
 class _DailyStatsPageState extends State<DailyStatsPage> {
-  final today = DateFormat('yMd').format(DateTime.now());
+  final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
   final _dailyKey = GlobalKey<FormState>();
   final bmiCal = BmiCalculator();
   final db = FirebaseFirestore.instance;
@@ -45,6 +43,25 @@ class _DailyStatsPageState extends State<DailyStatsPage> {
                 ),
               ),
             ));
+  }
+
+  getLatestStats() async {
+    QuerySnapshot latestDailyStats = await db
+        .collection('users/${widget.accMail}/dailyStats')
+        .orderBy('timestamp', descending: true)
+        .limit(1)
+        .get();
+    final latestData = latestDailyStats.docs.first;
+    if (latestDailyStats.size > 0 && latestData.exists) {
+      weightController.text = latestData.get('weight');
+      heightController.text = latestData.get('height');
+    }
+  }
+
+  @override
+  void initState() {
+    getLatestStats();
+    super.initState();
   }
 
   @override
@@ -138,15 +155,16 @@ class _DailyStatsPageState extends State<DailyStatsPage> {
                                                   weightController.text));
 
                                           db
-                                              .doc('users/${widget.accMail}')
+                                              .doc(
+                                                  'users/${widget.accMail}/dailyStats/$today')
                                               .set({
-                                            'dailyStats': {
-                                              'date': today,
-                                              'bmi': bmi,
-                                              'weight': weightController.text,
-                                              'height': heightController.text
-                                            }
-                                          }, SetOptions(merge: true));
+                                            'date': today,
+                                            'timestamp': DateTime.now()
+                                                .millisecondsSinceEpoch,
+                                            'bmi': bmi,
+                                            'weight': weightController.text,
+                                            'height': heightController.text
+                                          });
                                           if (_dailyKey.currentState!
                                               .validate()) {
                                             _showBmiDialog(bmi);

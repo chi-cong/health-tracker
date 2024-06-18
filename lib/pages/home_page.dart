@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:health_tracker/utils/bmi_calculator.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../auth/authentication.dart';
@@ -6,6 +7,9 @@ import '../components/custom_snackbar.dart';
 import 'login_page.dart';
 import './sub_pages/daily_stats_page.dart';
 import './sub_pages/my_info_page.dart';
+import './sub_pages/stats_history_page.dart';
+import './sub_pages/ask_ai_ page.dart';
+import './sub_pages/schedule_diet_page.dart';
 
 class HomePage extends StatefulWidget {
   final String accMail;
@@ -20,16 +24,25 @@ class _HomePageState extends State<HomePage> {
   final Authentication _authentication = Authentication();
   final db = FirebaseFirestore.instance;
   final message = CustomSnackbar();
+  String bmi = '...';
 
-  var accRef;
-  var accDoc;
+  getLatestStats() async {
+    QuerySnapshot latestDailyStats = await db
+        .collection('users/${widget.accMail}/dailyStats')
+        .orderBy('timestamp', descending: true)
+        .limit(1)
+        .get();
+    final latestData = latestDailyStats.docs.first;
+    if (latestDailyStats.size > 0 && latestData.exists) {
+      setState(() {
+        bmi = latestData.get('bmi').toString();
+      });
+    }
+  }
 
   @override
   void initState() {
-    accRef = db.doc('users/${widget.accMail}');
-    accRef.get().then((DocumentSnapshot doc) => setState(() {
-          accDoc = doc.data();
-        }));
+    getLatestStats();
     super.initState();
   }
 
@@ -125,7 +138,7 @@ class _HomePageState extends State<HomePage> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                   child: Text(
-                    '${accDoc != null && accDoc!.containsKey('username') ? accDoc!['username'] : widget.accMail}',
+                    widget.accMail,
                     style: const TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.bold,
@@ -139,15 +152,16 @@ class _HomePageState extends State<HomePage> {
                   decoration: const BoxDecoration(
                       color: Colors.white70,
                       borderRadius: BorderRadius.all(Radius.circular(20))),
-                  child: const Row(
+                  child: Row(
                     children: [
                       Padding(
-                        padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                        child: Text('BMI: 27'),
+                        padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                        child: Text('BMI: $bmi'),
                       ),
                       Padding(
-                        padding: EdgeInsets.fromLTRB(35, 0, 0, 0),
-                        child: Text('Classification: Overweight'),
+                        padding: const EdgeInsets.fromLTRB(35, 0, 0, 0),
+                        child: Text(
+                            'Classification: ${bmi != '...' ? BmiCalculator().getClassification(double.parse(bmi)) : bmi}'),
                       ),
                     ],
                   ),
@@ -193,7 +207,13 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () => {},
+                  onTap: () => {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                StatsHistoryPage(accMail: widget.accMail)))
+                  },
                   child: Container(
                     margin: const EdgeInsets.fromLTRB(0, 30, 0, 0),
                     height: 65,
@@ -224,7 +244,14 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () => {},
+                  onTap: () => {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ScheduleDietPage(
+                                  accMail: widget.accMail,
+                                )))
+                  },
                   child: Container(
                     margin: const EdgeInsets.fromLTRB(0, 30, 0, 0),
                     height: 65,
@@ -255,7 +282,14 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () => {},
+                  onTap: () => {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AskAiPage(
+                                  accMail: widget.accMail,
+                                )))
+                  },
                   child: Container(
                     margin: const EdgeInsets.fromLTRB(0, 30, 0, 0),
                     height: 65,
