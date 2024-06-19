@@ -8,7 +8,7 @@ import 'login_page.dart';
 import './sub_pages/daily_stats_page.dart';
 import './sub_pages/my_info_page.dart';
 import './sub_pages/stats_history_page.dart';
-import './sub_pages/ask_ai_ page.dart';
+import 'sub_pages/ask_ai_page.dart';
 import './sub_pages/schedule_diet_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -310,7 +310,7 @@ class _HomePageState extends State<HomePage> {
                         Padding(
                           padding: EdgeInsets.fromLTRB(35, 0, 0, 0),
                           child: Text(
-                            'Ask AI Chatbot',
+                            'Ask AI (Gemini)',
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.w500),
                           ),
