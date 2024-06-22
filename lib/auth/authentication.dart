@@ -27,6 +27,10 @@ class Authentication {
     }
   }
 
+  User? getCurrUser() {
+    return _auth.currentUser;
+  }
+
   void logout() async {
     try {
       await _auth.signOut();

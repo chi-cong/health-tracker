@@ -20,10 +20,10 @@ class _StatsHistoryState extends State<StatsHistoryPage> {
     QuerySnapshot recentStats = await db
         .collection('users/${widget.accMail}/dailyStats')
         .orderBy('timestamp', descending: true)
-        .limit(5)
+        .limit(7)
         .get();
     if (recentStats.size > 0) {
-      double index = 0;
+      double index = recentStats.size - 1;
       for (var stats in recentStats.docs) {
         double addedValue = stats['bmi'];
         if (addedValue > 40) {
@@ -33,7 +33,7 @@ class _StatsHistoryState extends State<StatsHistoryPage> {
         setState(() {
           bmiSpots.add(FlSpot(index, addedValue));
         });
-        index += 1;
+        index -= 1;
       }
     }
   }
@@ -63,7 +63,7 @@ class _StatsHistoryState extends State<StatsHistoryPage> {
             child: Column(
               children: [
                 const Center(
-                    child: Text('Latest 5 daily stats records',
+                    child: Text('Recent 7 daily stats records',
                         style: TextStyle(color: Colors.white70, fontSize: 20))),
                 const SizedBox(height: 30),
                 AspectRatio(aspectRatio: 1.7, child: LineChart(bmiChartData())),
@@ -143,7 +143,7 @@ class _StatsHistoryState extends State<StatsHistoryPage> {
           border: Border.all(color: Colors.blueGrey),
         ),
         minX: 0,
-        maxX: 5,
+        maxX: 7,
         minY: 0,
         maxY: 5,
         lineBarsData: [
