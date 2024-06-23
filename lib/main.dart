@@ -3,10 +3,16 @@ import 'package:flutter/material.dart';
 import "package:loader_overlay/loader_overlay.dart";
 import 'firebase_options.dart';
 import 'pages/login_page.dart';
+import './utils/services/noti_service.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  NotificationService().initNotification();
+  tz.initializeTimeZones();
+  tz.setLocalLocation(tz.getLocation('Asia/Ho_Chi_Minh'));
   runApp(const MyApp());
 }
 

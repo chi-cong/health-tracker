@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../components/tip_list.dart';
+import '../../utils/services/noti_service.dart';
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
+    as picker;
 
 class ScheduleDietPage extends StatefulWidget {
   final String accMail;
@@ -14,9 +17,9 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
   final db = FirebaseFirestore.instance;
 
   void _activityDialog(
-      {int? actiId, String? actiDes, TimeOfDay? actiTime, bool? actiAlarm}) {
+      {int? actiId, String? actiDes, DateTime? actiTime, bool? actiAlarm}) {
     final actiController = TextEditingController(text: actiDes);
-    String time = actiTime != null ? actiTime.format(context) : 'Select time';
+    DateTime? time = actiTime;
     bool alarm = actiAlarm ?? false;
     showDialog(
         context: context,
@@ -41,6 +44,14 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
                             ),
                             TextButton(
                                 onPressed: () {
+                                  if (alarm && time != null) {
+                                    NotificationService().scheduleNotification(
+                                        id: UniqueKey().hashCode,
+                                        scheduledDate: time!,
+                                        body: actiController.text,
+                                        title:
+                                            'It\'s time to do your activity');
+                                  }
                                   Navigator.of(context).pop();
                                 },
                                 child: const Icon(Icons.check))
@@ -68,24 +79,18 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
                             ),
                             TextButton(
                                 onPressed: () async {
-                                  final selectedTime = await showTimePicker(
-                                    context: context,
-                                    initialTime: TimeOfDay.now(),
-                                    builder:
-                                        (BuildContext context, Widget? child) {
-                                      return Directionality(
-                                        textDirection: TextDirection.rtl,
-                                        child: child!,
-                                      );
-                                    },
-                                  );
-                                  if (selectedTime != null) {
-                                    setState(() {
-                                      time = selectedTime.format(context);
-                                    });
-                                  }
+                                  await picker.DatePicker.showDateTimePicker(
+                                      context,
+                                      minTime: DateTime.now(),
+                                      onChanged: (pickedTime) => {
+                                            setState(() {
+                                              time = pickedTime;
+                                            })
+                                          });
                                 },
-                                child: Text(time)),
+                                child: Text(time != null
+                                    ? time.toString()
+                                    : 'Select time')),
                           ],
                         ),
                         const SizedBox(height: 10),
@@ -93,7 +98,7 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text(
-                              'Alarm',
+                              'Notification',
                               style: TextStyle(fontWeight: FontWeight.w500),
                             ),
                             Switch(
