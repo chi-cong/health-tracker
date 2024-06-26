@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../components/tip_list.dart';
 import '../../utils/services/noti_service.dart';
 import '../../components/activity_card.dart';
+import '../../utils/meal_type_map.dart';
+import '../../components/diet_note_card.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
     as picker;
 
@@ -17,6 +19,7 @@ class ScheduleDietPage extends StatefulWidget {
 class _ScheduleDietState extends State<ScheduleDietPage> {
   final db = FirebaseFirestore.instance;
   List<ActivityCard> activityList = [];
+  List<DietNoteCard> dietNoteList = [];
 
   /// *********** Schedule Section ********** */
   void addActivity(int id, String? desc, DateTime? time, bool alarm) {
@@ -112,11 +115,11 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            TextButton(
+                            IconButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: const Icon(Icons.close)),
+                                icon: const Icon(Icons.close)),
                             Text(
                               actiId != null
                                   ? "Update Activity"
@@ -124,7 +127,7 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
                               style:
                                   const TextStyle(fontWeight: FontWeight.w600),
                             ),
-                            TextButton(
+                            IconButton(
                                 onPressed: () {
                                   final id = UniqueKey().hashCode;
                                   if (alarm && time != null) {
@@ -153,7 +156,7 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
                                   });
                                   Navigator.of(context).pop();
                                 },
-                                child: const Icon(Icons.check))
+                                icon: const Icon(Icons.check))
                           ],
                         ),
                         const SizedBox(height: 10),
@@ -162,12 +165,11 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
                             maxLines: 2,
                             controller: actiController,
                             decoration: InputDecoration(
-                                border: const OutlineInputBorder(),
-                                hintText: actiDes != null
-                                    ? 'Description'
-                                    : 'New Activity',
-                                hintStyle:
-                                    const TextStyle(color: Colors.black45))),
+                              border: const OutlineInputBorder(),
+                              labelText: actiDes != null
+                                  ? 'Description'
+                                  : 'New Activity',
+                            )),
                         const SizedBox(height: 10),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -242,9 +244,95 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
 
   /// *****************  Diet section    ************
 
-  void _dietNotDialog() {
-    final foodNameController = TextEditingController();
-    final noteController = TextEditingController();
+  void addDietNote(int id, String? name, String? note, int mealType) {
+    setState(() {
+      dietNoteList.insert(
+          0,
+          DietNoteCard(
+            id: id,
+            name: name ?? "",
+            note: note ?? "",
+            meal: mealType,
+            editCallback: () => {
+              _dietNoteDialog(
+                  dietNoteId: id,
+                  mealType: mealType,
+                  name: name ?? "",
+                  note: note ?? "")
+            },
+            deleteCallback: () => {deleteDietNote(id)},
+          ));
+    });
+  }
+
+  void updateDietNote(int id, String? name, String? note, int mealType) {
+    int updatedCardIndex =
+        dietNoteList.indexWhere((dietNote) => dietNote.id == id);
+    if (updatedCardIndex != -1) {
+      List<DietNoteCard> temp = dietNoteList;
+      temp[updatedCardIndex] = DietNoteCard(
+          id: id,
+          name: name ?? "",
+          note: note ?? "",
+          meal: mealType,
+          editCallback: () => {
+                _dietNoteDialog(
+                    dietNoteId: id,
+                    mealType: mealType,
+                    name: name ?? "",
+                    note: note ?? "")
+              },
+          deleteCallback: () => {deleteDietNote(id)});
+      setState(() {
+        dietNoteList = temp;
+      });
+    }
+  }
+
+  void deleteDietNote(int id) async {
+    await db
+        .doc('users/${widget.accMail}/dietNotes/$id')
+        .delete()
+        .catchError((e) => {});
+    setState(() {
+      dietNoteList.removeWhere((dietNote) => dietNote.id == id);
+    });
+  }
+
+  void getDietNotes() async {
+    final List<DietNoteCard> tempList = [];
+    QuerySnapshot dietNotes = await db
+        .collection('users/${widget.accMail}/dietNotes')
+        .orderBy('mealType')
+        .get();
+    if (dietNotes.size > 0) {
+      for (var dietNote in dietNotes.docs) {
+        tempList.add(DietNoteCard(
+            id: dietNote['id'],
+            name: dietNote['name'] ?? "",
+            note: dietNote['note'] ?? '',
+            meal: dietNote['mealType'] ?? 1,
+            editCallback: () => {
+                  _dietNoteDialog(
+                    dietNoteId: dietNote['id'],
+                    name: dietNote['name'] ?? "",
+                    note: dietNote['note'] ?? '',
+                    mealType: dietNote['mealType'] ?? 1,
+                  )
+                },
+            deleteCallback: () => {deleteDietNote(dietNote['id'])}));
+      }
+    }
+    setState(() {
+      dietNoteList = tempList;
+    });
+  }
+
+  void _dietNoteDialog(
+      {int? dietNoteId, int? mealType, String? name, String? note}) {
+    final nameController = TextEditingController(text: name ?? "");
+    final noteController = TextEditingController(text: note ?? "");
+    int meal = mealType ?? 1;
     showDialog(
         context: context,
         builder: (context) => StatefulBuilder(
@@ -254,14 +342,121 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      TextField(
-                        controller: foodNameController,
-                        decoration:
-                            const InputDecoration(hintText: 'Food name'),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              icon: const Icon(Icons.close)),
+                          Text(
+                            dietNoteId != null ? "Update Note" : 'Add Note',
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          IconButton(
+                              onPressed: () async {
+                                final id = UniqueKey().hashCode;
+                                await db
+                                    .doc(
+                                        'users/${widget.accMail}/dietNotes/${dietNoteId ?? id}')
+                                    .set({
+                                  'id': dietNoteId ?? id,
+                                  'name': nameController.text,
+                                  'note': noteController.text,
+                                  'mealType': meal
+                                }).then((value) => {
+                                          if (dietNoteId == null)
+                                            {
+                                              addDietNote(
+                                                  id,
+                                                  nameController.text,
+                                                  noteController.text,
+                                                  meal)
+                                            }
+                                          else
+                                            {
+                                              updateDietNote(
+                                                  dietNoteId,
+                                                  nameController.text,
+                                                  noteController.text,
+                                                  meal)
+                                            }
+                                        });
+                                if (context.mounted) {
+                                  Navigator.of(context).pop();
+                                }
+                              },
+                              icon: const Icon(Icons.check)),
+                        ],
+                      ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: Wrap(
+                          spacing: 10,
+                          children: [
+                            SizedBox(
+                              width: 120,
+                              child: Row(children: [
+                                Radio<int>(
+                                  value: 1,
+                                  groupValue: meal,
+                                  onChanged: (int? value) {
+                                    setState(() {
+                                      meal = value!;
+                                    });
+                                  },
+                                ),
+                                Text(MealTypeMap(mealType: 1).getMealLabel()),
+                              ]),
+                            ),
+                            SizedBox(
+                              width: 120,
+                              child: Row(children: [
+                                Radio<int>(
+                                  value: 2,
+                                  groupValue: meal,
+                                  onChanged: (int? value) {
+                                    setState(() {
+                                      meal = value!;
+                                    });
+                                  },
+                                ),
+                                Text(MealTypeMap(mealType: 2).getMealLabel()),
+                              ]),
+                            ),
+                            SizedBox(
+                              width: 120,
+                              child: Row(children: [
+                                Radio<int>(
+                                  value: 3,
+                                  groupValue: meal,
+                                  onChanged: (int? value) {
+                                    setState(() {
+                                      meal = value!;
+                                    });
+                                  },
+                                ),
+                                Text(MealTypeMap(mealType: 3).getMealLabel()),
+                              ]),
+                            ),
+                          ],
+                        ),
                       ),
                       TextField(
+                        controller: nameController,
+                        decoration: const InputDecoration(
+                            labelText: 'Name', border: OutlineInputBorder()),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      TextField(
+                        maxLines: 3,
+                        minLines: 3,
                         controller: noteController,
-                        decoration: const InputDecoration(hintText: 'Note'),
+                        decoration: const InputDecoration(
+                            labelText: 'Note', border: OutlineInputBorder()),
                       ),
                     ],
                   ),
@@ -276,13 +471,16 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  _dietNotDialog();
+                  _dietNoteDialog();
                 },
                 style: ElevatedButton.styleFrom(
                     shape: const CircleBorder(),
                     padding: const EdgeInsets.all(10)),
                 child: const Icon(Icons.add),
               ),
+              Column(
+                children: dietNoteList.map((dietNote) => dietNote).toList(),
+              )
             ],
           ),
         ));
@@ -299,7 +497,7 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
                   padding: const EdgeInsets.fromLTRB(20, 20, 20, 50),
                   width: double.infinity,
                   decoration: const BoxDecoration(
-                      color: Colors.white70,
+                      color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(20))),
                   child: const TipList())
             ]));
@@ -308,6 +506,7 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
   @override
   void initState() {
     getActivities();
+    getDietNotes();
     super.initState();
   }
 

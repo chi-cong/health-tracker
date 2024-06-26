@@ -1,26 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../utils/meal_type_map.dart';
 
-class ActivityCard extends StatefulWidget {
+class DietNoteCard extends StatefulWidget {
   final int id;
-  final String? description;
-  final String? date;
+  final String? name;
+  final int meal;
+  final String? note;
   final VoidCallback editCallback;
   final VoidCallback deleteCallback;
 
-  const ActivityCard(
+  const DietNoteCard(
       {super.key,
       required this.id,
-      this.description,
-      this.date,
+      this.name,
+      required this.meal,
+      this.note,
       required this.editCallback,
       required this.deleteCallback});
 
   @override
-  State<ActivityCard> createState() => _ActivityCardState();
+  State<DietNoteCard> createState() => _DietNoteCardState();
 }
 
-class _ActivityCardState extends State<ActivityCard> {
+class _DietNoteCardState extends State<DietNoteCard> {
   final db = FirebaseFirestore.instance;
 
   @override
@@ -31,10 +34,10 @@ class _ActivityCardState extends State<ActivityCard> {
         children: [
           ListTile(
             title: Text(
-              widget.description ?? "",
+              '${widget.name} - ${MealTypeMap(mealType: widget.meal).getMealLabel()}',
               style: const TextStyle(fontWeight: FontWeight.w500),
             ),
-            subtitle: Text(widget.date ?? ""),
+            subtitle: Text(widget.note ?? ""),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,

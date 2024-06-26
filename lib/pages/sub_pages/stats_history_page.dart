@@ -13,6 +13,8 @@ class StatsHistoryPage extends StatefulWidget {
 class _StatsHistoryState extends State<StatsHistoryPage> {
   final db = FirebaseFirestore.instance;
   List<FlSpot> bmiSpots = [];
+  List<Card> statsCardList = [];
+  QuerySnapshot? statsList;
 
   List<Color> gradientColors = [Colors.cyan, Colors.blue];
 
@@ -34,6 +36,76 @@ class _StatsHistoryState extends State<StatsHistoryPage> {
           bmiSpots.add(FlSpot(index, addedValue));
         });
         index -= 1;
+
+        setState(() {
+          statsList = recentStats;
+          if (statsList != null && statsList!.size > 0) {
+            statsCardList.add(Card(
+              child: ListTile(
+                title: Text('${stats['date']} - BMI ${stats['bmi']}',
+                    style: const TextStyle(fontWeight: FontWeight.w500)),
+                subtitle: Text(
+                    'Weight: ${stats['weight']}  Height: ${stats['height']}'),
+              ),
+            ));
+          }
+        });
+      }
+    }
+  }
+
+  void getNextStats() async {
+    if (statsList != null && statsList!.size == 7) {
+      final lastSnapshot = statsList!.docs[statsList!.size - 1];
+      final next = await db
+          .collection('users/${widget.accMail}/dailyStats')
+          .orderBy('timestamp', descending: true)
+          .startAfterDocument(lastSnapshot)
+          .limit(7)
+          .get();
+      if (next.size > 0) {
+        setState(() {
+          statsList = next;
+          for (var stats in next.docs) {
+            statsCardList.add(Card(
+              child: ListTile(
+                title: Text(
+                  '${stats['date']} - BMI ${stats['bmi']}',
+                  style: const TextStyle(fontWeight: FontWeight.w500),
+                ),
+                subtitle: Text(
+                    'Weight: ${stats['weight']}  Height: ${stats['height']}'),
+              ),
+            ));
+          }
+        });
+      }
+    }
+  }
+
+  void getPrevStats() async {
+    if (statsList != null && statsList!.size > 0) {
+      final firstSnapshot = statsList!.docs[0];
+      final prev = await db
+          .collection('users/${widget.accMail}/dailyStats')
+          .orderBy('timestamp', descending: true)
+          .endBeforeDocument(firstSnapshot)
+          .limit(7)
+          .get();
+      if (prev.size > 0) {
+        setState(() {
+          statsList = prev;
+          for (var stats in prev.docs) {
+            statsCardList.add(Card(
+              child: ListTile(
+                title: Text('${stats['date']} - BMI ${stats['bmi']}',
+                    style: const TextStyle(fontWeight: FontWeight.w500)),
+                subtitle: Text(
+                    'Weight: ${stats['weight']}  Height: ${stats['height']}'),
+              ),
+            ));
+          }
+        });
       }
     }
   }
@@ -67,6 +139,25 @@ class _StatsHistoryState extends State<StatsHistoryPage> {
                         style: TextStyle(color: Colors.white70, fontSize: 20))),
                 const SizedBox(height: 30),
                 AspectRatio(aspectRatio: 1.7, child: LineChart(bmiChartData())),
+                const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton.filled(
+                        onPressed: getPrevStats,
+                        icon: const Icon(Icons.arrow_back)),
+                    const Text('Stats History',
+                        style: TextStyle(color: Colors.white70, fontSize: 20)),
+                    IconButton.filled(
+                        onPressed: getNextStats,
+                        icon: const Icon(Icons.arrow_forward_outlined))
+                  ],
+                ),
+                const SizedBox(height: 30),
+                Column(
+                  children:
+                      statsCardList.map((statsCard) => statsCard).toList(),
+                )
               ],
             )),
       ),

@@ -14,7 +14,12 @@ class AskAiPage extends StatefulWidget {
 
 class _AskAiState extends State<AskAiPage> {
   final db = FirebaseFirestore.instance;
-  List<BubbleSpecialThree> questionAnswers = [];
+  List<BubbleSpecialThree> questionAnswers = [
+    const BubbleSpecialThree(
+      text: 'Hi, what can I help you ?',
+      isSender: false,
+    )
+  ];
   final model = GenerativeModel(model: 'gemini-1.5-flash', apiKey: aiApiKey);
 
   Future<void> getAnswer(String prompt) async {
@@ -58,6 +63,7 @@ class _AskAiState extends State<AskAiPage> {
               ),
             ),
             MessageBar(
+              messageBarHintText: 'Type your question here',
               onSend: (prompt) => {
                 setState(() {
                   questionAnswers.add(BubbleSpecialThree(
