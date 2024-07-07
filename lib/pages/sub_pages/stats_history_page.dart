@@ -45,7 +45,7 @@ class _StatsHistoryState extends State<StatsHistoryPage> {
                 title: Text('${stats['date']} - BMI ${stats['bmi']}',
                     style: const TextStyle(fontWeight: FontWeight.w500)),
                 subtitle: Text(
-                    'Weight: ${stats['weight']}  Height: ${stats['height']}'),
+                    'Weight: ${stats['weight']}Kg  Height: ${(stats['height'])}Cm'),
               ),
             ));
           }
@@ -74,7 +74,7 @@ class _StatsHistoryState extends State<StatsHistoryPage> {
                   style: const TextStyle(fontWeight: FontWeight.w500),
                 ),
                 subtitle: Text(
-                    'Weight: ${stats['weight']}  Height: ${stats['height']}'),
+                    'Weight: ${stats['weight']}Kg  Height: ${stats['height']}Cm'),
               ),
             ));
           }
@@ -101,7 +101,7 @@ class _StatsHistoryState extends State<StatsHistoryPage> {
                 title: Text('${stats['date']} - BMI ${stats['bmi']}',
                     style: const TextStyle(fontWeight: FontWeight.w500)),
                 subtitle: Text(
-                    'Weight: ${stats['weight']}  Height: ${stats['height']}'),
+                    'Weight: ${stats['weight']}Kg Height: ${stats['height']}Cm'),
               ),
             ));
           }

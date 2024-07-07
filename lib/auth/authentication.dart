@@ -31,6 +31,14 @@ class Authentication {
     return _auth.currentUser;
   }
 
+  Future<void> resetPassword(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      throw 'Something went wrong. Please try again (ᗒᗣᗕ)՞';
+    }
+  }
+
   void logout() async {
     try {
       await _auth.signOut();
