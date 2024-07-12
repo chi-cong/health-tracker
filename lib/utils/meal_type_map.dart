@@ -4,12 +4,11 @@ class MealTypeMap {
   String getMealLabel() {
     switch (mealType) {
       case 1:
-        return 'Breakfast';
-
+        return 'Bữa sáng';
       case 2:
-        return 'Launch';
+        return 'Bữa trưa';
       default:
-        return 'Dinner';
+        return 'Bữa tối';
     }
   }
 }

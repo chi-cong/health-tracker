@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:health_tracker/components/custom_snackbar.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class MyInfoPage extends StatefulWidget {
   final String accMail;
@@ -23,9 +24,10 @@ class _MyInfoPageState extends State<MyInfoPage> {
         context: context,
         initialDate: DateTime(2002),
         firstDate: DateTime(1920),
-        lastDate: DateTime(2024));
+        lastDate: DateTime(2024),
+        locale: const Locale('vi', 'VI'));
     if (picked != null) {
-      _dateController.text = picked.toString().split(' ')[0];
+      _dateController.text = DateFormat('dd-MM-yyyy').format(picked);
     }
   }
 
@@ -77,7 +79,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
       )),
       Scaffold(
         appBar: AppBar(
-          title: const Text('My Information'),
+          title: const Text('Thông tin của tôi'),
           backgroundColor: Theme.of(context).colorScheme.primary,
         ),
         backgroundColor: Colors.transparent,
@@ -94,13 +96,13 @@ class _MyInfoPageState extends State<MyInfoPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 const Text(
-                  'My Name',
+                  'Tên',
                   style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
                 ),
                 TextField(
                   controller: _nameController,
                   decoration: const InputDecoration(
-                    labelText: 'Name',
+                    labelText: 'Tên',
                     prefixIcon: Icon(Icons.person_outline),
                   ),
                 ),
@@ -108,13 +110,13 @@ class _MyInfoPageState extends State<MyInfoPage> {
                   height: 15,
                 ),
                 const Text(
-                  'My Birthday',
+                  'Ngày sinh',
                   style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
                 ),
                 TextField(
                   controller: _dateController,
                   decoration: const InputDecoration(
-                    labelText: 'Date',
+                    labelText: 'Thời gian',
                     prefixIcon: Icon(Icons.calendar_today_outlined),
                   ),
                   readOnly: true,
@@ -126,7 +128,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                   height: 15,
                 ),
                 const Text(
-                  'My Body type',
+                  'Nhóm cơ thể',
                   style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
                 ),
                 Wrap(children: <Widget>[
@@ -142,11 +144,11 @@ class _MyInfoPageState extends State<MyInfoPage> {
                           });
                         },
                       ),
-                      const Text('Asian'),
+                      const Text('Châu Á'),
                     ]),
                   ),
                   SizedBox(
-                    width: 100,
+                    width: 140,
                     child: Row(children: [
                       Radio<String>(
                         value: 'others',
@@ -157,7 +159,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                           });
                         },
                       ),
-                      const Text('Others'),
+                      const Text('Nhóm khác'),
                     ]),
                   ),
                 ]),
@@ -165,7 +167,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                   height: 15,
                 ),
                 const Text(
-                  'My Gender',
+                  'Giới tính',
                   style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
                 ),
                 Wrap(children: <Widget>[
@@ -181,7 +183,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                           });
                         },
                       ),
-                      const Text('Male'),
+                      const Text('Nam'),
                     ]),
                   ),
                   SizedBox(
@@ -196,7 +198,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                           });
                         },
                       ),
-                      const Text('Female'),
+                      const Text('Nữ'),
                     ]),
                   ),
                 ]),
@@ -210,7 +212,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                         onPressed: () async {
                           _submitGeneralInfo();
                         },
-                        child: const Text('Update My Infomation')),
+                        child: const Text('Cập nhật thông tin')),
                   ),
                 ),
               ],

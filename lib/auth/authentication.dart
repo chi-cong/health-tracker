@@ -11,7 +11,7 @@ class Authentication {
     } on FirebaseAuthException catch (e) {
       throw mapSignupErrors(e.code);
     } catch (e) {
-      throw 'Something went wrong. Please try again (ᗒᗣᗕ)՞';
+      throw 'Có lỗi xảy ra. Hãy thử lại (ᗒᗣᗕ)՞';
     }
   }
 
@@ -23,7 +23,7 @@ class Authentication {
     } on FirebaseAuthException catch (e) {
       throw mapLogginErrors(e.code);
     } catch (e) {
-      throw 'Something went wrong. Please try again (ᗒᗣᗕ)՞';
+      throw 'Có lỗi xảy ra. Hãy thử lại (ᗒᗣᗕ)՞';
     }
   }
 
@@ -35,7 +35,7 @@ class Authentication {
     try {
       await _auth.sendPasswordResetEmail(email: email);
     } catch (e) {
-      throw 'Something went wrong. Please try again (ᗒᗣᗕ)՞';
+      throw 'Có lỗi xảy ra. Hãy thử lại (ᗒᗣᗕ)՞';
     }
   }
 
@@ -43,7 +43,7 @@ class Authentication {
     try {
       await _auth.signOut();
     } catch (e) {
-      throw 'Something went wrong. Please try again (ᗒᗣᗕ)՞';
+      throw 'Có lỗi xảy ra. Hãy thử lại (ᗒᗣᗕ)՞';
     }
   }
 }

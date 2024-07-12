@@ -7,23 +7,38 @@ class BmiCalculator {
     return num.parse((weight / pow((height / 100), 2)).toStringAsFixed(1));
   }
 
-  getClassification(double bmi) {
-    if (bmi < 16) {
-      return 'Severe Thinness';
-    } else if (16 <= bmi && bmi < 17) {
-      return 'Moderate Thinness';
-    } else if (17 <= bmi && bmi < 18.5) {
-      return 'Mild Thinness';
-    } else if (18.5 <= bmi && bmi < 25) {
-      return 'Normal';
-    } else if (25 <= bmi && bmi < 30) {
-      return 'Overweight';
-    } else if (30 <= bmi && bmi < 35) {
-      return 'Obese Class 1';
-    } else if (35 <= bmi && bmi < 40) {
-      return 'Obese Class 2';
+  getClassification(double bmi, String? bodyType) {
+    if (bodyType != null && bodyType == 'asian') {
+      if (bmi < 18.5) {
+        return 'Gầy';
+      } else if (18.5 <= bmi && bmi < 23) {
+        return 'Cân đối';
+      } else if (23 <= bmi && bmi < 25) {
+        return 'Thừa cân';
+      } else if (25 <= bmi && bmi < 30) {
+        return 'Béo phì mức 1';
+      } else if (30 <= bmi) {
+        return 'Béo phì mức 2';
+      }
     } else {
-      return 'Obese Class 3';
+      if (bmi < 16) {
+        return 'Rất gầy';
+      } else if (16 <= bmi && bmi < 17) {
+        return 'Khá gầy';
+      } else if (17 <= bmi && bmi < 18.5) {
+        return 'Gầy';
+      } else if (18.5 <= bmi && bmi < 25) {
+        return 'Cân đối';
+      } else if (25 <= bmi && bmi < 30) {
+        return 'Thừa cân';
+      } else if (30 <= bmi && bmi < 35) {
+        return 'Béo phì mức 1';
+      } else if (35 <= bmi && bmi < 40) {
+        return 'Béo phì mức 2';
+      } else {
+        return 'Béo phì mức 3';
+      }
     }
+    return 'Không xác định';
   }
 }

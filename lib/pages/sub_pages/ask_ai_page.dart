@@ -16,7 +16,7 @@ class _AskAiState extends State<AskAiPage> {
   final db = FirebaseFirestore.instance;
   List<BubbleSpecialThree> questionAnswers = [
     const BubbleSpecialThree(
-      text: 'Hi, what can I help you ?',
+      text: 'Xin chào, bạn có câu hỏi nào về sức khỏe không ?',
       isSender: false,
     )
   ];
@@ -29,7 +29,7 @@ class _AskAiState extends State<AskAiPage> {
       questionAnswers.add(BubbleSpecialThree(
         text: response.text != null
             ? response.text!
-            : "Failed to generate answer. Please try again",
+            : "Tạo câu trả lời thất bại. Xin bạn hãy thử lại lần nữa.",
         isSender: false,
       ));
     });
@@ -50,7 +50,7 @@ class _AskAiState extends State<AskAiPage> {
       )),
       Scaffold(
         appBar: AppBar(
-          title: const Text('Ask AI'),
+          title: const Text('Hỏi đáp với AI'),
           backgroundColor: Theme.of(context).colorScheme.primary,
         ),
         backgroundColor: Colors.transparent,
@@ -63,7 +63,7 @@ class _AskAiState extends State<AskAiPage> {
               ),
             ),
             MessageBar(
-              messageBarHintText: 'Type your question here',
+              messageBarHitText: 'Viết câu hỏi của bạn',
               onSend: (prompt) => {
                 setState(() {
                   questionAnswers.add(BubbleSpecialThree(

@@ -14,12 +14,12 @@ String mapLogginErrors(String err) {
 String mapSignupErrors(String err) {
   switch (err) {
     case 'email-already-in-use':
-      return 'No user found for that email ┐( ˘_˘)┌';
+      return 'Email đã tồn tại ┐( ˘_˘)┌';
     case 'invalid-email':
-      return 'Email is invalid. Try something else ┐( ˘_˘)┌';
+      return 'Email không hợp lệ ┐( ˘_˘)┌';
     case 'weak-password':
-      return 'This password is weak. Try something else ┐( ˘_˘)┌';
+      return 'Mật khẩu yếu, Hãy thử mật khẩu khác ┐( ˘_˘)┌';
     default:
-      return 'Unable to create account. Please contact the author •ᴗ•';
+      return 'Tại tài khoản thất bại.Hãy liên hệ với tác giả  •ᴗ•';
   }
 }

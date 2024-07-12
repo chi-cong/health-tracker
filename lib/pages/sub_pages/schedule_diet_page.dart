@@ -5,6 +5,7 @@ import '../../utils/services/noti_service.dart';
 import '../../components/activity_card.dart';
 import '../../utils/meal_type_map.dart';
 import '../../components/diet_note_card.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
     as picker;
 
@@ -29,7 +30,8 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
           ActivityCard(
             id: id,
             description: desc ?? "",
-            date: time != null ? time.toString() : "",
+            date:
+                time != null ? DateFormat('dd-MM-yyyy HH:mm').format(time) : "",
             editCallback: () => {
               _activityDialog(
                 actiId: id,
@@ -49,7 +51,7 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
       temp[updatedCardIndex] = ActivityCard(
           id: id,
           description: desc,
-          date: time != null ? time.toString() : "",
+          date: time != null ? DateFormat('dd-MM-yyyy HH:mm').format(time) : "",
           editCallback: () => {
                 _activityDialog(
                   actiId: id,
@@ -122,8 +124,8 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
                                 icon: const Icon(Icons.close)),
                             Text(
                               actiId != null
-                                  ? "Update Activity"
-                                  : 'Add Activity',
+                                  ? "Cập nhật hoạt động"
+                                  : 'Thêm hoạt động',
                               style:
                                   const TextStyle(fontWeight: FontWeight.w600),
                             ),
@@ -136,7 +138,7 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
                                         scheduledDate: time!,
                                         body: actiController.text,
                                         title:
-                                            'It\'s time to do your activity');
+                                            'Đã tới lúc thực hiện hoạt động');
                                   }
                                   if (actiId == null) {
                                     addActivity(
@@ -151,7 +153,10 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
                                       .set({
                                     'id': actiId ?? id,
                                     'description': actiController.text,
-                                    'time': time != null ? time.toString() : '',
+                                    'time': time != null
+                                        ? DateFormat('dd-MM-yyyy HH:mm')
+                                            .format(time!)
+                                        : '',
                                     'alarm': alarm
                                   });
                                   Navigator.of(context).pop();
@@ -166,22 +171,22 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
                             controller: actiController,
                             decoration: InputDecoration(
                               border: const OutlineInputBorder(),
-                              labelText: actiDes != null
-                                  ? 'Description'
-                                  : 'New Activity',
+                              labelText:
+                                  actiDes != null ? 'Mô tả' : 'Hoạt động mới',
                             )),
                         const SizedBox(height: 10),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text(
-                              'Time',
+                              'Thời gian',
                               style: TextStyle(fontWeight: FontWeight.w500),
                             ),
                             TextButton(
                                 onPressed: () async {
                                   await picker.DatePicker.showDateTimePicker(
                                       context,
+                                      locale: picker.LocaleType.vi,
                                       minTime: DateTime.now(),
                                       onChanged: (pickedTime) => {
                                             setState(() {
@@ -190,8 +195,9 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
                                           });
                                 },
                                 child: Text(time != null
-                                    ? time.toString()
-                                    : 'Select time')),
+                                    ? DateFormat('dd-MM-yyyy HH:mm')
+                                        .format(time!)
+                                    : 'Lựa chọn thời gian')),
                           ],
                         ),
                         const SizedBox(height: 10),
@@ -199,7 +205,7 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text(
-                              'Notification',
+                              'Đặt thông báo',
                               style: TextStyle(fontWeight: FontWeight.w500),
                             ),
                             Switch(
@@ -351,7 +357,9 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
                               },
                               icon: const Icon(Icons.close)),
                           Text(
-                            dietNoteId != null ? "Update Note" : 'Add Note',
+                            dietNoteId != null
+                                ? "Cập nhật ghi chú"
+                                : 'Thêm ghi chú',
                             style: const TextStyle(fontWeight: FontWeight.w600),
                           ),
                           IconButton(
@@ -446,7 +454,7 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
                       TextField(
                         controller: nameController,
                         decoration: const InputDecoration(
-                            labelText: 'Name', border: OutlineInputBorder()),
+                            labelText: 'Tên', border: OutlineInputBorder()),
                       ),
                       const SizedBox(
                         height: 20,
@@ -456,7 +464,7 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
                         minLines: 3,
                         controller: noteController,
                         decoration: const InputDecoration(
-                            labelText: 'Note', border: OutlineInputBorder()),
+                            labelText: 'Ghi chú', border: OutlineInputBorder()),
                       ),
                     ],
                   ),
@@ -499,7 +507,7 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
                   decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(20))),
-                  child: const TipList())
+                  child: TipList())
             ]));
   }
 
@@ -523,20 +531,20 @@ class _ScheduleDietState extends State<ScheduleDietPage> {
         length: 3,
         child: Scaffold(
             appBar: AppBar(
-              title: const Text('Schedule & diet'),
+              title: const Text('Lịch trình & Chế độ ăn'),
               backgroundColor: Theme.of(context).colorScheme.primary,
               bottom: const TabBar(
                 tabs: <Widget>[
                   Tab(
-                    text: 'Schedule',
+                    text: 'Lịch trình',
                     icon: Icon(Icons.calendar_today),
                   ),
                   Tab(
-                    text: 'Diet note',
+                    text: 'Chế độ ăn',
                     icon: Icon(Icons.fastfood_outlined),
                   ),
                   Tab(
-                    text: 'Tips',
+                    text: 'Thông tin',
                     icon: Icon(Icons.lightbulb),
                   ),
                 ],

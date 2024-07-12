@@ -6,14 +6,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DailyStatsPage extends StatefulWidget {
   final String accMail;
-  const DailyStatsPage({super.key, required this.accMail});
+  final String? bodyType;
+  const DailyStatsPage({super.key, required this.accMail, this.bodyType});
 
   @override
   State<DailyStatsPage> createState() => _DailyStatsPageState();
 }
 
 class _DailyStatsPageState extends State<DailyStatsPage> {
-  final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  final today = DateFormat('dd-MM-yyyy').format(DateTime.now());
   final _dailyKey = GlobalKey<FormState>();
   final bmiCal = BmiCalculator();
   final db = FirebaseFirestore.instance;
@@ -31,7 +32,7 @@ class _DailyStatsPageState extends State<DailyStatsPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                        'Your bmi is $bmi, You are classifed as ${bmiCal.getClassification(bmi)}. For more detail, head to "Schedule & diet" '),
+                        'Chỉ số BMI của bạn là $bmi, Bạn thuộc nhóm ${bmiCal.getClassification(bmi, widget.bodyType)}. Để biết thêm thông tin, hãy vào mục "Lịch trình & chế độ ăn" '),
                     const SizedBox(height: 15),
                     TextButton(
                       onPressed: () {
@@ -75,7 +76,7 @@ class _DailyStatsPageState extends State<DailyStatsPage> {
       Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
-            title: const Text('Daily Stats'),
+            title: const Text('Cập nhật BMI trong ngày'),
             backgroundColor: Theme.of(context).colorScheme.primary,
           ),
           body: SingleChildScrollView(
@@ -87,7 +88,7 @@ class _DailyStatsPageState extends State<DailyStatsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Today is $today',
+                      'Hôm nay là $today',
                       style: const TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
@@ -115,14 +116,14 @@ class _DailyStatsPageState extends State<DailyStatsPage> {
                                             prefixIcon:
                                                 Icon(Icons.scale_outlined),
                                             border: UnderlineInputBorder(),
-                                            labelText: 'Today Weight (Kg)'),
+                                            labelText: 'Cân nặng (Kg)'),
                                         keyboardType: TextInputType.number,
                                         inputFormatters: [
                                           FilteringTextInputFormatter.digitsOnly
                                         ],
                                         validator: (value) {
                                           if (value != null && value.isEmpty) {
-                                            return 'This field is required';
+                                            return 'Đây là thông tin bắt buộc';
                                           }
                                           return null;
                                         }),
@@ -135,11 +136,11 @@ class _DailyStatsPageState extends State<DailyStatsPage> {
                                             prefixIcon:
                                                 Icon(Icons.height_outlined),
                                             border: UnderlineInputBorder(),
-                                            labelText: 'Your Height (Cm)'),
+                                            labelText: 'Chiều cao (Cm)'),
                                         keyboardType: TextInputType.number,
                                         validator: (value) {
                                           if (value != null && value.isEmpty) {
-                                            return 'This field is required';
+                                            return 'Đây là thông tin bắt buộc';
                                           }
                                           return null;
                                         }),
@@ -154,23 +155,24 @@ class _DailyStatsPageState extends State<DailyStatsPage> {
                                               double.parse(
                                                   weightController.text));
 
-                                          db
-                                              .doc(
-                                                  'users/${widget.accMail}/dailyStats/$today')
-                                              .set({
-                                            'date': today,
-                                            'timestamp': DateTime.now()
-                                                .millisecondsSinceEpoch,
-                                            'bmi': bmi,
-                                            'weight': weightController.text,
-                                            'height': heightController.text
-                                          });
                                           if (_dailyKey.currentState!
                                               .validate()) {
+                                            db
+                                                .doc(
+                                                    'users/${widget.accMail}/dailyStats/$today')
+                                                .set({
+                                              'date': today,
+                                              'timestamp': DateTime.now()
+                                                  .millisecondsSinceEpoch,
+                                              'bmi': bmi,
+                                              'weight': weightController.text,
+                                              'height': heightController.text
+                                            });
                                             _showBmiDialog(bmi);
                                           }
                                         },
-                                        child: const Text('Get today results'))
+                                        child:
+                                            const Text('Nhận kết quả hôm nay'))
                                   ],
                                 ),
                               ],

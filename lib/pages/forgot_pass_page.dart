@@ -26,7 +26,7 @@ class _ForgotPassPageState extends State<ForgotPassPage> {
       )),
       Scaffold(
         appBar: AppBar(
-          title: const Text('Forgot Password'),
+          title: const Text('Quên mật khẩu'),
           backgroundColor: Theme.of(context).colorScheme.primary,
         ),
         backgroundColor: Colors.transparent,
@@ -53,11 +53,11 @@ class _ForgotPassPageState extends State<ForgotPassPage> {
                                 decoration: const InputDecoration(
                                     prefixIcon: Icon(Icons.mail),
                                     border: UnderlineInputBorder(),
-                                    labelText: 'Your Email'),
+                                    labelText: 'Email của bạn'),
                                 validator: (value) =>
                                     value == null || value.trim().contains('@')
                                         ? null
-                                        : 'Invalid Email',
+                                        : 'Email không hợp lệ',
                               ),
                               const SizedBox(
                                 height: 40,
@@ -78,15 +78,16 @@ class _ForgotPassPageState extends State<ForgotPassPage> {
                                       .resetPassword(emailController.text);
                                   if (context.mounted) {
                                     CustomSnackbar().success(
-                                        "Please check your email", context);
+                                        "Xin hãy kiểm tra email của bạn",
+                                        context);
                                   }
                                 } catch (e) {
                                   if (context.mounted) {
                                     ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(
-                                      content: Text(e.toString()),
-                                      duration:
-                                          const Duration(milliseconds: 1500),
+                                        .showSnackBar(const SnackBar(
+                                      content: Text(
+                                          "Đã có lỗi xảy ra, xin hãy thử lại"),
+                                      duration: Duration(milliseconds: 5000),
                                       backgroundColor: Colors.red,
                                     ));
                                   }
@@ -96,7 +97,7 @@ class _ForgotPassPageState extends State<ForgotPassPage> {
                                 }
                               }
                             },
-                            child: const Text('Reset Password')),
+                            child: const Text('Tạo lại mật khẩu')),
                       ),
                     ],
                   ),

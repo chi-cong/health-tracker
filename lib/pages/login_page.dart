@@ -94,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
                                 validator: (value) =>
                                     value == null || value.trim().contains('@')
                                         ? null
-                                        : 'Invalid Email',
+                                        : 'Email không hợp lệ',
                               ),
                               const SizedBox(
                                 height: 40,
@@ -104,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                                   decoration: const InputDecoration(
                                       prefixIcon: Icon(Icons.lock),
                                       border: UnderlineInputBorder(),
-                                      labelText: 'Password'),
+                                      labelText: 'Mật khẩu'),
                                   obscureText: true,
                                   validator: (value) {
                                     RegExp regExp =
@@ -112,10 +112,10 @@ class _LoginPageState extends State<LoginPage> {
                                     if (value == null ||
                                         value.length < 8 ||
                                         value.length >= 30) {
-                                      return 'Password length should be 8 to 30';
+                                      return 'Mật khẩu dài từ 8 đến 30 ký tự';
                                     }
                                     if (!regExp.hasMatch(value)) {
-                                      return 'Must contains characters and digits';
+                                      return 'Phải chứa ký tự chữ và số';
                                     }
                                     return null;
                                   }),
@@ -132,7 +132,7 @@ class _LoginPageState extends State<LoginPage> {
                                                 builder: (context) =>
                                                     const ForgotPassPage()));
                                       },
-                                      child: const Text("Forgot password"))
+                                      child: const Text("Quên mật khẩu"))
                                 ],
                               )
                             ],
@@ -176,14 +176,14 @@ class _LoginPageState extends State<LoginPage> {
                                 }
                               }
                             },
-                            child: const Text('Login')),
+                            child: const Text('Đăng nhập')),
                       ),
                       SizedBox(
                         height: 40,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text("Dont't have an account ?"),
+                            const Text("Chưa có tài khoản ?"),
                             TextButton(
                                 onPressed: () {
                                   Navigator.push(
@@ -192,7 +192,7 @@ class _LoginPageState extends State<LoginPage> {
                                           builder: (context) =>
                                               const SignupPage()));
                                 },
-                                child: const Text('Signup'))
+                                child: const Text('Đăng ký'))
                           ],
                         ),
                       )

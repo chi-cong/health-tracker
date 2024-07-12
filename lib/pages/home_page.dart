@@ -25,6 +25,8 @@ class _HomePageState extends State<HomePage> {
   final db = FirebaseFirestore.instance;
   final message = CustomSnackbar();
   String bmi = '...';
+  String greetingName = "";
+  String? bodyType;
 
   getLatestStats() async {
     QuerySnapshot latestDailyStats = await db
@@ -40,9 +42,25 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  getUserInfoName() async {
+    var userDocSnapshot = await db.doc('users/${widget.accMail}').get();
+    if (userDocSnapshot.exists) {
+      Map<String, dynamic>? userData = userDocSnapshot.data();
+      if (userData != null && userData['name'] != null) {
+        greetingName = userData['name'];
+      } else {
+        greetingName = widget.accMail;
+      }
+      if (userData != null && userData['name'] != null) {
+        bodyType = userData['bodyType'];
+      }
+    }
+  }
+
   @override
   void initState() {
     getLatestStats();
+    getUserInfoName();
     super.initState();
   }
 
@@ -59,14 +77,14 @@ class _HomePageState extends State<HomePage> {
               child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(
+              DrawerHeader(
+                decoration: const BoxDecoration(
                   color: Colors.indigo,
                 ),
                 child: Text(
-                  'Have A Good Day !',
-                  style: TextStyle(
-                      fontSize: 15,
+                  'Chúc bạn một ngày tốt lành !\n $greetingName',
+                  style: const TextStyle(
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.white70),
                 ),
@@ -76,7 +94,7 @@ class _HomePageState extends State<HomePage> {
                   Icons.person_outline,
                   color: Colors.indigo,
                 ),
-                title: const Text('My Account'),
+                title: const Text('Thông tin của tôi'),
                 onTap: () {
                   Navigator.push(
                       context,
@@ -91,7 +109,7 @@ class _HomePageState extends State<HomePage> {
                   Icons.logout_outlined,
                   color: Colors.indigo,
                 ),
-                title: const Text('Logout'),
+                title: const Text('Đăng xuất'),
                 onTap: () {
                   context.loaderOverlay.show();
                   try {
@@ -129,7 +147,7 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Hello',
+                  'Xin chào',
                   style: TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
@@ -138,7 +156,7 @@ class _HomePageState extends State<HomePage> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                   child: Text(
-                    widget.accMail,
+                    greetingName,
                     style: const TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.bold,
@@ -161,7 +179,7 @@ class _HomePageState extends State<HomePage> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(35, 0, 0, 0),
                         child: Text(
-                            'Classification: ${bmi != '...' ? BmiCalculator().getClassification(double.parse(bmi)) : bmi}'),
+                            'Phân loại: ${bmi != '...' ? BmiCalculator().getClassification(double.parse(bmi), bodyType) : bmi}'),
                       ),
                     ],
                   ),
@@ -173,6 +191,7 @@ class _HomePageState extends State<HomePage> {
                       MaterialPageRoute(
                         builder: (context) => DailyStatsPage(
                           accMail: widget.accMail,
+                          bodyType: bodyType,
                         ),
                       ),
                     )
@@ -197,7 +216,7 @@ class _HomePageState extends State<HomePage> {
                         Padding(
                           padding: EdgeInsets.fromLTRB(35, 0, 0, 0),
                           child: Text(
-                            'Update Daily Stats',
+                            'Cập nhật BMI ',
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.w500),
                           ),
@@ -234,7 +253,7 @@ class _HomePageState extends State<HomePage> {
                         Padding(
                           padding: EdgeInsets.fromLTRB(35, 0, 0, 0),
                           child: Text(
-                            'Stats History',
+                            'Lịch sử chỉ số',
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.w500),
                           ),
@@ -272,7 +291,7 @@ class _HomePageState extends State<HomePage> {
                         Padding(
                           padding: EdgeInsets.fromLTRB(35, 0, 0, 0),
                           child: Text(
-                            'Schedulte & Diet',
+                            'Lịch trình & chế độ ăn',
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.w500),
                           ),
@@ -310,7 +329,7 @@ class _HomePageState extends State<HomePage> {
                         Padding(
                           padding: EdgeInsets.fromLTRB(35, 0, 0, 0),
                           child: Text(
-                            'Ask AI (Gemini)',
+                            'Hỏi đáp với AI',
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.w500),
                           ),

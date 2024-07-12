@@ -54,7 +54,7 @@ class _SignupPageState extends State<SignupPage> {
                                   validator: (value) => value == null ||
                                           value.trim().contains('@')
                                       ? null
-                                      : 'Invalid Email',
+                                      : 'Email không hợp lệ',
                                 ),
                                 const SizedBox(
                                   height: 40,
@@ -64,7 +64,7 @@ class _SignupPageState extends State<SignupPage> {
                                     decoration: const InputDecoration(
                                         prefixIcon: Icon(Icons.lock),
                                         border: UnderlineInputBorder(),
-                                        labelText: 'Password'),
+                                        labelText: 'Mật khẩu'),
                                     obscureText: true,
                                     validator: (value) {
                                       RegExp regExp =
@@ -72,10 +72,10 @@ class _SignupPageState extends State<SignupPage> {
                                       if (value == null ||
                                           value.length < 8 ||
                                           value.length >= 30) {
-                                        return 'Password length should be 8 to 30';
+                                        return 'Mật khẩu dài từ 8 đến 30 ký tự';
                                       }
                                       if (!regExp.hasMatch(value)) {
-                                        return 'Must contains characters and digits';
+                                        return 'Phải chứa ký tự chữ và số';
                                       }
                                       return null;
                                     }),
@@ -87,7 +87,7 @@ class _SignupPageState extends State<SignupPage> {
                                     decoration: const InputDecoration(
                                         prefixIcon: Icon(Icons.lock),
                                         border: UnderlineInputBorder(),
-                                        labelText: 'Confirm Password'),
+                                        labelText: 'Xác nhận mật khẩu'),
                                     obscureText: true,
                                     validator: (value) {
                                       RegExp regExp =
@@ -95,14 +95,14 @@ class _SignupPageState extends State<SignupPage> {
                                       if (value == null ||
                                           value.length < 8 ||
                                           value.length >= 30) {
-                                        return 'Password length should be 8 to 30';
+                                        return 'Mật khẩu dài từ 8 đến 30 ký tự';
                                       }
                                       if (!regExp.hasMatch(value)) {
-                                        return 'Must contains characters and digits';
+                                        return 'Phải chứa ký tự chữ và số';
                                       }
                                       if (passwordController.text !=
                                           confirmPasswordController.text) {
-                                        return ('Must be the same with password');
+                                        return ('Không khớp với mật khẩu');
                                       }
                                       return null;
                                     }),
@@ -124,8 +124,9 @@ class _SignupPageState extends State<SignupPage> {
                                     if (context.mounted) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(const SnackBar(
-                                        content: Text('Signup Success ˶ᵔ ᵕ ᵔ˶'),
-                                        duration: Duration(milliseconds: 1500),
+                                        content: Text(
+                                            'Đăng ký tài khoản thành công ˶ᵔ ᵕ ᵔ˶'),
+                                        duration: Duration(milliseconds: 5000),
                                       ));
                                       Navigator.pop(context);
                                     }
@@ -144,14 +145,14 @@ class _SignupPageState extends State<SignupPage> {
                                   }
                                 }
                               },
-                              child: const Text('Signup')),
+                              child: const Text('Đăng ký')),
                         ),
                         SizedBox(
                           height: 40,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text("Already have an account ?"),
+                              const Text("Đã có tài khoản ?"),
                               TextButton(
                                   onPressed: () {
                                     Navigator.push(
@@ -160,7 +161,7 @@ class _SignupPageState extends State<SignupPage> {
                                             builder: (context) =>
                                                 const LoginPage()));
                                   },
-                                  child: const Text('Login'))
+                                  child: const Text('Đăng nhập'))
                             ],
                           ),
                         )

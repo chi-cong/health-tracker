@@ -1,20 +1,43 @@
 import 'package:flutter/material.dart';
 
 class TipList extends StatelessWidget {
-  const TipList({super.key});
+  TipList({super.key});
+
+  final List<Map<String, String>> tipList = [
+    {
+      'title': 'BMI là gì ?',
+      'content':
+          'BMI là chỉ số đo lường mức độ béo phì. BMI được tính theo công thức (cân nặng)/(chiều cao^2)'
+    },
+    {
+      'title': 'Làm sao BMI đánh giá thể trạng một người ?',
+      'content':
+          'Thông thường một người cân đối có chỉ số BMI từ 18.5 tới 24.9, từ 18.5 tới 24.9 với người Châu Á. \nVượt quá khoảng này được xếp vào thừa cân hoặc béo phì. Dưới khoảng này được xếp vào nhóm gầy'
+    },
+    {
+      'title': 'Tôi nên sắp xếp hoạt động thể dục thế nào ?',
+      'content':
+          'Hãy thực hiện hoạt động vừa sức với thể chất của bạn, không nên quá gắng sức. Các hoạt động nên có quãng nghỉ phù hợp và đừng quên bổ sung các chất cần thiết cho bữa ăn'
+    }
+  ];
+
+  List<ExpansionTile> makeList() {
+    List<ExpansionTile> tipListWidget = [];
+    for (int i = 0; i < tipList.length; i++) {
+      tipListWidget.add(ExpansionTile(
+          title: Text(
+            tipList[i]['title']!,
+            style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+          ),
+          children: [Text(tipList[i]['content']!)]));
+    }
+    return tipListWidget;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      children: <Widget>[
-        ExpansionTile(
-          title: Text('Underweight child (above 2 years old)'),
-          children: [
-            Text(
-                '**DO** \n *Include more starchy carbohydrates such as potatoes, bread or rice in meals\n *Increase their calorie intake with healthy fats – add grated cheese to meals and make porridge with milk\n *Give them high-calorie drinks in between meals, such as milkshakes or smoothies\n *Encourage a healthy attitude to eating – include them in the food preparation and try to eat together\n *Have snacks available if they get hungry between meals – try yoghurts, breadsticks and small sandwiches\n *Help them get enough vitamins by giving children aged from 6 months old to 5 years old vitamin A, C and D drops every day\n *Introduce new foods gradually and in small portions – if they\'re a fussy eater this will help them get used to new foods \n **DON\'T** \n *Do not rely on unhealthy food for weight gain – swap cakes and crisps for a banana or cheese on crackers \n *Do not give them drinks and snacks before eating – they might be too full to eat and will miss out on essential nutrients\n *Try not to get frustrated if they do not eat everything on their plate – it might turn mealtimes into a negative experience\n *Do not stop them exercising – physical activity will help them develop stronger bones and muscles')
-          ],
-        )
-      ],
+    return Column(
+      children: makeList(),
     );
   }
 }

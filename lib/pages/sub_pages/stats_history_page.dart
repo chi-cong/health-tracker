@@ -45,7 +45,7 @@ class _StatsHistoryState extends State<StatsHistoryPage> {
                 title: Text('${stats['date']} - BMI ${stats['bmi']}',
                     style: const TextStyle(fontWeight: FontWeight.w500)),
                 subtitle: Text(
-                    'Weight: ${stats['weight']}Kg  Height: ${(stats['height'])}Cm'),
+                    'Cân nặng: ${stats['weight']}Kg  Chiều cao: ${(stats['height'])}Cm'),
               ),
             ));
           }
@@ -66,6 +66,7 @@ class _StatsHistoryState extends State<StatsHistoryPage> {
       if (next.size > 0) {
         setState(() {
           statsList = next;
+          statsCardList = [];
           for (var stats in next.docs) {
             statsCardList.add(Card(
               child: ListTile(
@@ -74,7 +75,7 @@ class _StatsHistoryState extends State<StatsHistoryPage> {
                   style: const TextStyle(fontWeight: FontWeight.w500),
                 ),
                 subtitle: Text(
-                    'Weight: ${stats['weight']}Kg  Height: ${stats['height']}Cm'),
+                    'Cân  nặng: ${stats['weight']}Kg  Chiều cao: ${stats['height']}Cm'),
               ),
             ));
           }
@@ -95,13 +96,14 @@ class _StatsHistoryState extends State<StatsHistoryPage> {
       if (prev.size > 0) {
         setState(() {
           statsList = prev;
+          statsCardList = [];
           for (var stats in prev.docs) {
             statsCardList.add(Card(
               child: ListTile(
                 title: Text('${stats['date']} - BMI ${stats['bmi']}',
                     style: const TextStyle(fontWeight: FontWeight.w500)),
                 subtitle: Text(
-                    'Weight: ${stats['weight']}Kg Height: ${stats['height']}Cm'),
+                    'Cân nặng: ${stats['weight']}Kg Chiều cao: ${stats['height']}Cm'),
               ),
             ));
           }
@@ -126,7 +128,7 @@ class _StatsHistoryState extends State<StatsHistoryPage> {
       )),
       Scaffold(
         appBar: AppBar(
-          title: const Text('Stats History'),
+          title: const Text('Lịch Sử Chỉ Số'),
           backgroundColor: Theme.of(context).colorScheme.primary,
         ),
         backgroundColor: Colors.transparent,
@@ -135,7 +137,7 @@ class _StatsHistoryState extends State<StatsHistoryPage> {
             child: Column(
               children: [
                 const Center(
-                    child: Text('Recent 7 daily stats records',
+                    child: Text('BMI của 7 lần cập nhật gần nhất',
                         style: TextStyle(color: Colors.white70, fontSize: 20))),
                 const SizedBox(height: 30),
                 AspectRatio(aspectRatio: 1.7, child: LineChart(bmiChartData())),
@@ -146,7 +148,7 @@ class _StatsHistoryState extends State<StatsHistoryPage> {
                     IconButton.filled(
                         onPressed: getPrevStats,
                         icon: const Icon(Icons.arrow_back)),
-                    const Text('Stats History',
+                    const Text('Lịch sử chỉ số',
                         style: TextStyle(color: Colors.white70, fontSize: 20)),
                     IconButton.filled(
                         onPressed: getNextStats,
@@ -234,7 +236,7 @@ class _StatsHistoryState extends State<StatsHistoryPage> {
           border: Border.all(color: Colors.blueGrey),
         ),
         minX: 0,
-        maxX: 7,
+        maxX: 6,
         minY: 0,
         maxY: 5,
         lineBarsData: [
