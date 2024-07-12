@@ -23,8 +23,16 @@ class _AskAiState extends State<AskAiPage> {
   final model = GenerativeModel(model: 'gemini-1.5-flash', apiKey: aiApiKey);
 
   Future<void> getAnswer(String prompt) async {
-    final content = [Content.text(prompt)];
-    final response = await model.generateContent(content);
+    final chat = model.startChat(history: [
+      Content.text(
+          'Tôi muốn hỏi bạn các câu hỏi về sức khỏe. Chỉ trả lời tôi khi tôi hỏi về chủ đề sức khỏe, hạn chế trả lời nếu không phải chủ đề sức khỏe'),
+      Content.model([
+        TextPart(
+            'Được rồi. Tôi sẽ chỉ trả lời bạn khi bạn hỏi về chủ đề sức khỏe. Hãy thoải mái hỏi bất cứ điều gì bạn muốn biết!')
+      ])
+    ]);
+    final content = Content.text(prompt);
+    final response = await chat.sendMessage(content);
     setState(() {
       questionAnswers.add(BubbleSpecialThree(
         text: response.text != null
