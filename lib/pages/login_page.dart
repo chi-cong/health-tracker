@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:health_tracker/components/custom_snackbar.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../auth/authentication.dart';
 import 'signup_page.dart';
 import './forgot_pass_page.dart';
 import './home_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({
@@ -57,6 +60,27 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  Future<UserCredential> signInWithGoogle() async {
+    // 1. Create a GoogleSignIn instance
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+
+    // 2. Trigger the sign-in flow
+    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+    // 3. Obtain authentication details
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    // 4. Create a Firebase credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // 5. Sign in with Firebase
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
@@ -72,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
           child: Container(
             padding: const EdgeInsets.fromLTRB(0, 70, 0, 50),
             width: double.infinity,
-            height: 500,
+            height: 550,
             decoration: const BoxDecoration(
                 color: Colors.white70,
                 borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -195,6 +219,36 @@ class _LoginPageState extends State<LoginPage> {
                                 child: const Text('Đăng ký'))
                           ],
                         ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                        child: Text('Hoặc'),
+                      ),
+                      SizedBox(
+                        width: 250,
+                        child: FilledButton(
+                            onPressed: () async {
+                              try {
+                                final UserCredential userCredential =
+                                    await signInWithGoogle();
+                                if (context.mounted &&
+                                    userCredential.user != null) {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => HomePage(
+                                                accMail:
+                                                    userCredential.user!.email!,
+                                              )));
+                                }
+                              } catch (e) {
+                                if (context.mounted) {
+                                  CustomSnackbar()
+                                      .error('There was an error', context);
+                                }
+                              }
+                            },
+                            child: const Text('Đăng nhập với Google')),
                       )
                     ],
                   ),

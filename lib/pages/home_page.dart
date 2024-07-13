@@ -10,6 +10,7 @@ import './sub_pages/my_info_page.dart';
 import './sub_pages/stats_history_page.dart';
 import 'sub_pages/ask_ai_page.dart';
 import './sub_pages/schedule_diet_page.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class HomePage extends StatefulWidget {
   final String accMail;
@@ -114,6 +115,7 @@ class _HomePageState extends State<HomePage> {
                   context.loaderOverlay.show();
                   try {
                     _authentication.logout();
+                    GoogleSignIn().signOut();
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
@@ -121,7 +123,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     );
                   } catch (e) {
-                    message.error(e.toString(), context);
+                    message.error('there was an error', context);
                   }
                   context.loaderOverlay.hide();
                 },

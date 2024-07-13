@@ -58,8 +58,10 @@ class _MyInfoPageState extends State<MyInfoPage> {
       Map<String, dynamic>? userData = userDocSnapshot.data();
       _dateController.text = userData?['birthday'];
       _nameController.text = userData?['name'];
-      _type = userData?['bodyType'];
-      _gender = userData?['gender'];
+      setState(() {
+        _type = userData?['bodyType'];
+        _gender = userData?['gender'];
+      });
     }
   }
 
