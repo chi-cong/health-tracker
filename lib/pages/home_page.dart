@@ -47,14 +47,16 @@ class _HomePageState extends State<HomePage> {
     var userDocSnapshot = await db.doc('users/${widget.accMail}').get();
     if (userDocSnapshot.exists) {
       Map<String, dynamic>? userData = userDocSnapshot.data();
-      if (userData != null && userData['name'] != null) {
-        greetingName = userData['name'];
-      } else {
-        greetingName = widget.accMail;
-      }
-      if (userData != null && userData['name'] != null) {
-        bodyType = userData['bodyType'];
-      }
+      setState(() {
+        if (userData != null && userData['name'] != null) {
+          greetingName = userData['name'];
+        } else {
+          greetingName = widget.accMail;
+        }
+        if (userData != null && userData['name'] != null) {
+          bodyType = userData['bodyType'];
+        }
+      });
     }
   }
 
@@ -102,6 +104,7 @@ class _HomePageState extends State<HomePage> {
                       MaterialPageRoute(
                           builder: (context) => MyInfoPage(
                                 accMail: widget.accMail,
+                                updateInfo: getUserInfoName,
                               )));
                 },
               ),

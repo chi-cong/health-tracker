@@ -6,7 +6,8 @@ import 'package:intl/intl.dart';
 
 class MyInfoPage extends StatefulWidget {
   final String accMail;
-  const MyInfoPage({super.key, required this.accMail});
+  final VoidCallback? updateInfo;
+  const MyInfoPage({super.key, required this.accMail, this.updateInfo});
 
   @override
   State<MyInfoPage> createState() => _MyInfoPageState();
@@ -40,9 +41,13 @@ class _MyInfoPageState extends State<MyInfoPage> {
       'bodyType': _type,
       'gender': _gender,
     }, SetOptions(merge: true)).then((value) {
-      CustomSnackbar().success("Your infomation is updated :)", context);
+      CustomSnackbar()
+          .success("Thông tin của bạn đã được cập nhật :)", context);
       if (context.mounted) {
         context.loaderOverlay.hide();
+      }
+      if (widget.updateInfo != null) {
+        widget.updateInfo!();
       }
     }).catchError((err) {
       CustomSnackbar().error("Error : $err", context);

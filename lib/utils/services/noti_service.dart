@@ -50,7 +50,7 @@ class NotificationService {
             UILocalNotificationDateInterpretation.absoluteTime);
   }
 
-  Future cnacelScheduleNotification({required int id}) async {
+  Future cancelScheduleNotification({required int id}) async {
     await notificationsPlugin.cancel(id);
   }
 }
