@@ -1,9 +1,9 @@
 # Health Tracker
 
 Tracking BMI, scheduling activities, building personal diet and chat bot assistant<br/>
-This project works on Android.
+This app works on Android.
 
-Main techs are used in this app :
+Main techs are used in this project :
 
 - Flutter
 - Firebase : Authentication, Firestore
